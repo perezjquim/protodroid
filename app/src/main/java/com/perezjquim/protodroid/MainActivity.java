@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.perezjquim.PermissionChecker;
 import com.perezjquim.protodroid.db.DatabaseManager;
+import com.perezjquim.protodroid.view.ProjectCardView;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -58,13 +59,8 @@ public class MainActivity extends AppCompatActivity
             final int id = projects.getInt(0);
             final String name = projects.getString(1);
 
-            CardView card = new CardView(this);
-            TextView label = new TextView(this);
-            label.setText(name);
-
-            card.setContentPadding(10,50,10,50);
-            card.setOnClickListener((v)-> openProject(id,name));
-            card.addView(label);
+            ProjectCardView card = new ProjectCardView(this, name,
+                    (v)-> openProject(id,name));
             projectListView.addView(card);
         }
     }
