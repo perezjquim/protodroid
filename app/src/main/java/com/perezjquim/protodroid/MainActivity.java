@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity
             TextView label = new TextView(this);
             label.setText(name);
 
-            card.setContentPadding(50,50,50,50);
+            card.setContentPadding(10,50,10,50);
             card.setOnClickListener((v)-> openProject(id,name));
             card.addView(label);
             projectListView.addView(card);

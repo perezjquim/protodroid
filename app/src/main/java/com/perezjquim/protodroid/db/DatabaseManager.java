@@ -55,6 +55,8 @@ public abstract class DatabaseManager
 
     private static final String SQL_GET_PROJECTS =
             "SELECT id,name FROM " + PROJECT_TABLE;
+    private static final String SQL_GET_PAGES =
+            "SELECT id,name FROM " + PAGE_TABLE + " WHERE Project_id='?'";
 
     private static SQLiteDatabase db;
 
@@ -123,5 +125,11 @@ public abstract class DatabaseManager
     {
     	// Obtém os markers
     	return db.rawQuery(SQL_GET_PROJECTS,null);
+    }
+
+    public static Cursor getPages(int projectID)
+    {
+        // Obtém os markers
+        return db.rawQuery(SQL_GET_PAGES.replace("?",""+projectID),null);
     }
 }
