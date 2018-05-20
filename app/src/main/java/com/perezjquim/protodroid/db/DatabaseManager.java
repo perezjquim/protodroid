@@ -54,7 +54,7 @@ public abstract class DatabaseManager
             "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,Page_id,Page_destination_id) VALUES (?,?,?,?,?)";
 
     private static final String SQL_GET_PROJECTS =
-            "SELECT name FROM " + PROJECT_TABLE;
+            "SELECT id,name FROM " + PROJECT_TABLE;
 
     private static SQLiteDatabase db;
 

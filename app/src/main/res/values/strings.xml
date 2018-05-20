@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Protodroid</string>
+    <string name="CREATE_PROJECT">Create a new project</string>
+    <string name="PROJECT_LIST">Projects</string>
 </resources>
