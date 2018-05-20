@@ -55,13 +55,26 @@ public class MainActivity extends AppCompatActivity
         LinearLayout projectListView = findViewById(R.id.projectList);
         while(projects.moveToNext())
         {
+            final int id = projects.getInt(0);
+            final String name = projects.getString(1);
+
             CardView card = new CardView(this);
             TextView label = new TextView(this);
-            label.setText(projects.getString(1));
+            label.setText(name);
+
             card.setContentPadding(50,50,50,50);
+            card.setOnClickListener((v)-> openProject(id,name));
             card.addView(label);
             projectListView.addView(card);
         }
+    }
+
+    private void openProject(int id, String name)
+    {
+        Intent i = new Intent(this,ProjectActivity.class);
+        i.putExtra("id",id);
+        i.putExtra("name",name);
+        startActivity(i);
     }
 
     public void addProject(View v)
