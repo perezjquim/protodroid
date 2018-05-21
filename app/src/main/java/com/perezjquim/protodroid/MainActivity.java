@@ -17,6 +17,9 @@ import static com.perezjquim.UIHelper.toast;
 
 public class MainActivity extends AppCompatActivity
 {
+    private static final int COLUMN_ID = 0;
+    private static final int COLUMN_NAME = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -45,8 +48,8 @@ public class MainActivity extends AppCompatActivity
         LinearLayout projectListView = findViewById(R.id.projectList);
         for(int i = 0; projects.moveToNext(); i++)
         {
-            final int id = projects.getInt(0);
-            final String name = projects.getString(1);
+            final int id = projects.getInt(COLUMN_ID);
+            final String name = projects.getString(COLUMN_NAME);
 
             final ActionCardView[] card = new ActionCardView[1];
             card[0] = new ActionCardView(this, name,

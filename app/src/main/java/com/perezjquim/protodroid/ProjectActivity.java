@@ -20,6 +20,10 @@ public class ProjectActivity extends AppCompatActivity
     private int id;
     private String name;
 
+    private static final int COLUMN_ID = 0;
+    private static final int COLUMN_PROJECT_ID = 1;
+    private static final int COLUMN_NAME = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -44,16 +48,24 @@ public class ProjectActivity extends AppCompatActivity
         LinearLayout pageListView = findViewById(R.id.pageList);
         for(int i = 0; pages.moveToNext(); i++)
         {
-            final int id = pages.getInt(0);
-            final String name = pages.getString(1);
+            final int id = pages.getInt(COLUMN_ID);
+            final String name = pages.getString(COLUMN_NAME);
 
             final ActionCardView[] card = new ActionCardView[1];
             card[0] = new ActionCardView(this, name,
                     (v)->toast(this,"(page preview)"),
-                    (v)->toast(this,"(page edit)"),
+                    (v)->openPage(id,name),
                     (v)->deletePage(pageListView,card[0],id));
             pageListView.addView(card[0]);
         }
+    }
+
+    private void openPage(int id, String name)
+    {
+        Intent i = new Intent(this,PageActivity.class);
+        i.putExtra("id",id);
+        i.putExtra("name",name);
+        startActivity(i);
     }
 
     public void addPage(View v)

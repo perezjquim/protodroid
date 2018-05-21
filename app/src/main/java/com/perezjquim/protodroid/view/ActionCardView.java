@@ -51,23 +51,32 @@ public class ActionCardView extends CardView
 
     private void initButtons(Context c,String name,OnClickListener actionPlay, OnClickListener actionEdit, OnClickListener actionDelete)
     {
-        btnPlay = new ImageButton(c);
-        btnPlay.setOnClickListener(actionPlay);
-        btnPlay.setImageResource(android.R.drawable.ic_media_play);
-        btnPlay.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
-        content.addView(btnPlay);
+        if(actionPlay != null)
+        {
+            btnPlay = new ImageButton(c);
+            btnPlay.setOnClickListener(actionPlay);
+            btnPlay.setImageResource(android.R.drawable.ic_media_play);
+            btnPlay.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
+            content.addView(btnPlay);
+        }
 
-        btnEdit = new ImageButton(c);
-        btnEdit.setOnClickListener(actionEdit);
-        btnEdit.setImageResource(android.R.drawable.ic_menu_edit);
-        btnEdit.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
-        content.addView(btnEdit);
+        if(actionEdit != null)
+        {
+            btnEdit = new ImageButton(c);
+            btnEdit.setOnClickListener(actionEdit);
+            btnEdit.setImageResource(android.R.drawable.ic_menu_edit);
+            btnEdit.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
+            content.addView(btnEdit);
+        }
 
-        btnDelete = new ImageButton(c);
-        btnDelete.setOnClickListener(actionDelete);
-        btnDelete.setImageResource(android.R.drawable.ic_menu_delete);
-        btnDelete.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
-        content.addView(btnDelete);
+        if(actionDelete != null)
+        {
+            btnDelete = new ImageButton(c);
+            btnDelete.setOnClickListener(actionDelete);
+            btnDelete.setImageResource(android.R.drawable.ic_menu_delete);
+            btnDelete.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
+            content.addView(btnDelete);
+        }
     }
 
     private void initLabel(Context c,String name)

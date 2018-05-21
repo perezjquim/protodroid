@@ -21,7 +21,7 @@ public abstract class DatabaseManager
             "`name` VARCHAR(45) NOT NULL" +
             ")";
     private static final String SQL_GET_PROJECTS =
-            "SELECT id,name FROM " + PROJECT_TABLE;
+            "SELECT * FROM " + PROJECT_TABLE;
     private static final String SQL_INSERT_PROJECT =
             "INSERT INTO " + PROJECT_TABLE +" (name) VALUES ('1')";
     private static final String SQL_DELETE_PROJECT =
@@ -37,7 +37,7 @@ public abstract class DatabaseManager
                     "FOREIGN KEY (`Project_id`) REFERENCES Project(id) ON DELETE CASCADE "+
                     ")";
     private static final String SQL_GET_PAGES =
-            "SELECT id,name FROM " + PAGE_TABLE + " WHERE Project_id='1'";
+            "SELECT * FROM " + PAGE_TABLE + " WHERE Project_id='1'";
     private static final String SQL_INSERT_PAGE =
             "INSERT INTO " + PAGE_TABLE +" (Project_id,name) VALUES ('1','2')";
     private static final String SQL_DELETE_PAGE =
@@ -50,14 +50,18 @@ public abstract class DatabaseManager
                     "`id` INTEGER NOT NULL PRIMARY KEY," +
                     "`type` INTEGER NOT NULL," +
                     "`label` VARCHAR(45) NOT NULL," +
-                    "`config` VARCHAR(45) NOT NULL," +
-                    "`Page_id` INTEGER (45) NOT NULL," +
+                    "`config` VARCHAR(45)," +
+                    "`Page_id` INTEGER NOT NULL," +
                     "`Page_destination_id` INTEGER," +
-                    "FOREIGN KEY (`Page_destination_id`) REFERENCES Page(id) ON DELETE CASCADE,"+
+                    "FOREIGN KEY (`Page_destination_id`) REFERENCES Page(id) ON DELETE SET NULL,"+
                     "FOREIGN KEY (`Page_id`) REFERENCES Page(id) ON DELETE CASCADE "+
                     ")";
+    private static final String SQL_GET_ELEMENTS =
+            "SELECT * FROM " + ELEMENT_TABLE + " WHERE Page_id='1'";
     private static final String SQL_INSERT_ELEMENT =
-            "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,Page_id,Page_destination_id) VALUES ('1','2','3','4','5')";
+            "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,Page_id) VALUES ('1','2','3','4')";
+    private static final String SQL_DELETE_ELEMENT =
+            "DELETE FROM " + ELEMENT_TABLE + " WHERE id='1'";
 
 
     private static final String SQL_CLEAR_DB =
@@ -175,5 +179,28 @@ public abstract class DatabaseManager
     {
         query(SQL_DELETE_PAGE
                 .replace("1",""+pageID));
+    }
+
+    /* ************** */
+    /* ELEMENTS */
+    /* ************** */
+    public static Cursor getElements(int pageID)
+    {
+        // Obtém os markers
+        return querySelect(SQL_GET_ELEMENTS
+                .replace("1",""+pageID));
+    }
+    public static void insertElement (int type,String label,String config,int pageID)
+    {
+        query(SQL_INSERT_ELEMENT
+                .replace("1",""+type)
+                .replace("2",label)
+                .replace("3",config)
+                .replace("4",""+pageID));
+    }
+    public static void deleteElement(int elementID)
+    {
+        query(SQL_DELETE_ELEMENT
+                .replace("1",""+elementID));
     }
 }
