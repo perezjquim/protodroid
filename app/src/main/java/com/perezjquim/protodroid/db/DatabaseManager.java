@@ -2,7 +2,6 @@ package com.perezjquim.protodroid.db;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
 import android.util.Log;
 
@@ -60,6 +59,10 @@ public abstract class DatabaseManager
             "SELECT * FROM " + ELEMENT_TABLE + " WHERE Page_id='1'";
     private static final String SQL_INSERT_ELEMENT =
             "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,Page_id) VALUES ('1','2','3','4')";
+    private static final String SQL_UPDATE_ELEMENT =
+            "UPDATE " + ELEMENT_TABLE +" SET type='1' , label='2' , config='3' WHERE id='4'";
+    private static final String SQL_GET_INDIVIDUAL_ELEMENT =
+            "SELECT * FROM " + ELEMENT_TABLE + " WHERE id='1'";
     private static final String SQL_DELETE_ELEMENT =
             "DELETE FROM " + ELEMENT_TABLE + " WHERE id='1'";
 
@@ -190,7 +193,7 @@ public abstract class DatabaseManager
         return querySelect(SQL_GET_ELEMENTS
                 .replace("1",""+pageID));
     }
-    public static void insertElement (int type,String label,String config,int pageID)
+    public static void insertElement(int type,String label,String config,int pageID)
     {
         query(SQL_INSERT_ELEMENT
                 .replace("1",""+type)
@@ -198,9 +201,24 @@ public abstract class DatabaseManager
                 .replace("3",config)
                 .replace("4",""+pageID));
     }
+    public static void updateElement(int type,String label,String config, int elementID)
+    {
+        query(SQL_UPDATE_ELEMENT
+                .replace("1",""+type)
+                .replace("2",label)
+                .replace("3",config)
+                .replace("4",""+elementID));
+    }
     public static void deleteElement(int elementID)
     {
         query(SQL_DELETE_ELEMENT
                 .replace("1",""+elementID));
+    }
+    public static Cursor getIndividualElement(int elementID)
+    {
+        Cursor c = querySelect(SQL_GET_INDIVIDUAL_ELEMENT
+                .replace("1",""+elementID));
+        c.moveToNext();
+        return c;
     }
 }

@@ -73,6 +73,7 @@ public class ProjectActivity extends AppCompatActivity
         askString(this,"Create a new page","Page name:",(response)->
         {
             DatabaseManager.insertPage(id,(String) response);
+            toast(this,"Page created!");
             Intent i = new Intent(this,ProjectActivity.class);
             i.putExtra("id",id);
             i.putExtra("name",name);

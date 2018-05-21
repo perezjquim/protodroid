@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         askString(this,"Create a new project","Project name:",(response)->
         {
             DatabaseManager.insertProject((String) response);
+            toast(this,"Project created!");
             startActivity(new Intent(this,MainActivity.class));
             this.finish();
         });
