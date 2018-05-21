@@ -1,31 +1,27 @@
 package com.perezjquim.protodroid;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.perezjquim.PermissionChecker;
 import com.perezjquim.protodroid.db.DatabaseManager;
 import com.perezjquim.protodroid.view.ActionCardView;
 
+import static com.perezjquim.UIHelper.askBinary;
+import static com.perezjquim.UIHelper.askString;
 import static com.perezjquim.UIHelper.toast;
 
 public class MainActivity extends AppCompatActivity
 {
-
-    private PermissionChecker permissionChecker;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        initPermissionChecker();
+        PermissionChecker.init(this);
         DatabaseManager.initDatabase();
         setContentView(R.layout.activity_main);
         listProjects();
@@ -38,17 +34,8 @@ public class MainActivity extends AppCompatActivity
         switch(requestCode)
         {
             case PermissionChecker.REQUEST_CODE:
-                permissionChecker.restart();
+                PermissionChecker.restart();
                 break;
-        }
-    }
-
-    private void initPermissionChecker()
-    {
-        if (Build.VERSION.SDK_INT >= 23)
-        {
-            permissionChecker = new PermissionChecker(this);
-            permissionChecker.start();
         }
     }
 
@@ -80,44 +67,21 @@ public class MainActivity extends AppCompatActivity
 
     public void addProject(View v)
     {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Create a new project");
-        alertDialog.setMessage("Project name:");
-
-        final EditText input = new EditText(this);
-        input.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));
-        alertDialog.setView(input);
-
-        alertDialog.setPositiveButton("Confirm",
-                (dialog, which) ->
-                {
-                    String name = ""+input.getText();
-                    DatabaseManager.insertProject(name);
-                    startActivity(new Intent(this,MainActivity.class));
-                    this.finish();
-                });
-
-        alertDialog.setNegativeButton("Cancel",
-                (dialog, which) -> dialog.cancel());
-
-        alertDialog.show();
+        askString(this,"Create a new project","Project name:",(response)->
+        {
+            DatabaseManager.insertProject((String) response);
+            startActivity(new Intent(this,MainActivity.class));
+            this.finish();
+        });
     }
 
     private void deleteProject(LinearLayout list, ActionCardView card, int projectID)
     {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Are you sure you want to delete this project?");
-        alertDialog.setPositiveButton("Yes",
-                (dialog, which) ->
-                {
-                    list.removeView(card);
-                    DatabaseManager.deleteProject(projectID);
-                    toast(this,"Project deleted!");
-                });
-        alertDialog.setNegativeButton("No",
-                (dialog, which) -> dialog.cancel());
-        alertDialog.show();
+        askBinary(this,"Are you sure you want to delete this project?",null,()->
+        {
+            list.removeView(card);
+            DatabaseManager.deleteProject(projectID);
+            toast(this,"Project deleted!");
+        });
     }
 }
