@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-public class PageCardView extends CardView
+public class ActionCardView extends CardView
 {
     private LinearLayout content;
     private TextView txtLabel;
@@ -17,24 +17,24 @@ public class PageCardView extends CardView
     private static final int PADDING_LEFT_RIGHT = 10;
     private static final int PADDING_TOP_BOTTOM = 50;
 
-    public PageCardView(Context context, AttributeSet attrs, String label, OnClickListener actionPlay, OnClickListener actionEdit, OnClickListener actionDelete)
+    public ActionCardView(Context context, AttributeSet attrs, String label, OnClickListener actionPlay, OnClickListener actionEdit, OnClickListener actionDelete)
     {
         super(context, attrs);
         init(context,label,actionPlay,actionEdit,actionDelete);
     }
 
-    public PageCardView(Context context, String label, OnClickListener actionPlay, OnClickListener actionEdit, OnClickListener actionDelete)
+    public ActionCardView(Context context, String label, OnClickListener actionPlay, OnClickListener actionEdit, OnClickListener actionDelete)
     {
         super(context);
         init(context,label,actionPlay,actionEdit,actionDelete);
     }
 
-    public PageCardView(Context context, AttributeSet attrs)
+    public ActionCardView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         init(context,"None",null,null,null);
     }
-    public PageCardView(Context context)
+    public ActionCardView(Context context)
     {
         super(context);
         init(context,"None",null,null,null);
@@ -58,13 +58,13 @@ public class PageCardView extends CardView
         content.addView(btnPlay);
 
         btnEdit = new ImageButton(c);
-        btnPlay.setOnClickListener(actionEdit);
+        btnEdit.setOnClickListener(actionEdit);
         btnEdit.setImageResource(android.R.drawable.ic_menu_edit);
         btnEdit.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
         content.addView(btnEdit);
 
         btnDelete = new ImageButton(c);
-        btnPlay.setOnClickListener(actionDelete);
+        btnDelete.setOnClickListener(actionDelete);
         btnDelete.setImageResource(android.R.drawable.ic_menu_delete);
         btnDelete.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
         content.addView(btnDelete);

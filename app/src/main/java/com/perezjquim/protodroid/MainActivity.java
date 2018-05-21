@@ -1,18 +1,20 @@
 package com.perezjquim.protodroid;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.perezjquim.PermissionChecker;
 import com.perezjquim.protodroid.db.DatabaseManager;
-import com.perezjquim.protodroid.view.ProjectCardView;
+import com.perezjquim.protodroid.view.ActionCardView;
+
+import static com.perezjquim.UIHelper.toast;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -54,14 +56,17 @@ public class MainActivity extends AppCompatActivity
     {
         Cursor projects = DatabaseManager.getProjects();
         LinearLayout projectListView = findViewById(R.id.projectList);
-        while(projects.moveToNext())
+        for(int i = 0; projects.moveToNext(); i++)
         {
             final int id = projects.getInt(0);
             final String name = projects.getString(1);
 
-            ProjectCardView card = new ProjectCardView(this, name,
-                    (v)-> openProject(id,name));
-            projectListView.addView(card);
+            final ActionCardView[] card = new ActionCardView[1];
+            card[0] = new ActionCardView(this, name,
+                    (v)->toast(this,"(project preview)"),
+                    (v)->openProject(id,name),
+                    (v)->deleteProject(projectListView,card[0],id));
+            projectListView.addView(card[0]);
         }
     }
 
@@ -75,6 +80,44 @@ public class MainActivity extends AppCompatActivity
 
     public void addProject(View v)
     {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Create a new project");
+        alertDialog.setMessage("Project name:");
 
+        final EditText input = new EditText(this);
+        input.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        alertDialog.setView(input);
+
+        alertDialog.setPositiveButton("Confirm",
+                (dialog, which) ->
+                {
+                    String name = ""+input.getText();
+                    DatabaseManager.insertProject(name);
+                    startActivity(new Intent(this,MainActivity.class));
+                    this.finish();
+                });
+
+        alertDialog.setNegativeButton("Cancel",
+                (dialog, which) -> dialog.cancel());
+
+        alertDialog.show();
+    }
+
+    private void deleteProject(LinearLayout list, ActionCardView card, int projectID)
+    {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Are you sure you want to delete this project?");
+        alertDialog.setPositiveButton("Yes",
+                (dialog, which) ->
+                {
+                    list.removeView(card);
+                    DatabaseManager.deleteProject(projectID);
+                    toast(this,"Project deleted!");
+                });
+        alertDialog.setNegativeButton("No",
+                (dialog, which) -> dialog.cancel());
+        alertDialog.show();
     }
 }
