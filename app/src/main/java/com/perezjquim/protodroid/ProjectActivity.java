@@ -53,7 +53,7 @@ public class ProjectActivity extends AppCompatActivity
 
             final ActionCardView[] card = new ActionCardView[1];
             card[0] = new ActionCardView(this, name,
-                    (v)->toast(this,"(page preview)"),
+                    (v)->previewPage(id,name),
                     (v)->openPage(id,name),
                     (v)->deletePage(pageListView,card[0],id));
             pageListView.addView(card[0]);
@@ -63,6 +63,14 @@ public class ProjectActivity extends AppCompatActivity
     private void openPage(int id, String name)
     {
         Intent i = new Intent(this,PageActivity.class);
+        i.putExtra("id",id);
+        i.putExtra("name",name);
+        startActivity(i);
+    }
+
+    private void previewPage(int id,String name)
+    {
+        Intent i = new Intent(this,PreviewActivity.class);
         i.putExtra("id",id);
         i.putExtra("name",name);
         startActivity(i);

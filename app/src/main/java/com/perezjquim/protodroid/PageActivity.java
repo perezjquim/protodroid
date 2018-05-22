@@ -27,14 +27,12 @@ public class PageActivity extends AppCompatActivity
     private static final int COLUMN_ID = 0;
     private static final int COLUMN_TYPE = 1;
     private static final int COLUMN_LABEL = 2;
-    private static final int COLUMN_PAGE_ID = 3;
-    private static final int COLUMN_PAGE_DESTINATION_ID = 4;
-    private static final int COLUMN_CONFIG = 5;
+    private static final int COLUMN_CONFIG = 3;
+    private static final int COLUMN_PAGE_ID = 4;
+    private static final int COLUMN_PAGE_DESTINATION_ID = 5;
 
-    private static final int TYPE_BUTTON = 0;
-    private static final int TYPE_CHECKBOX = 1;
 
-    private static final String[] types = { "Button" , "Checkbox" };
+    private static final String[] types = { "Button" , "Checkbox" , "Switch" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -58,7 +56,7 @@ public class PageActivity extends AppCompatActivity
     {
         Cursor elements = DatabaseManager.getElements(id);
         LinearLayout elementListView = findViewById(R.id.elementList);
-        for(int i = 0; elements.moveToNext(); i++)
+        while(elements.moveToNext())
         {
             final int id = elements.getInt(COLUMN_ID);
             final String name = elements.getString(COLUMN_LABEL);
@@ -101,6 +99,7 @@ public class PageActivity extends AppCompatActivity
         alertDialog.setPositiveButton("Confirm",
                 (dialog,which) ->
                 {
+                    System.out.println(spTypes.getSelectedItemPosition());
                     DatabaseManager.insertElement(spTypes.getSelectedItemPosition(),""+fldLabel.getText(),"",id);
                     toast(this,"Element created!");
                     Intent i = new Intent(this,PageActivity.class);

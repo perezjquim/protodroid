@@ -21,7 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ProjectActivity" />
-        <activity android:name=".PageActivity"></activity>
+        <activity android:name=".PageActivity" />
+        <activity android:name=".PreviewActivity"></activity>
     </application>
 
 </manifest>
