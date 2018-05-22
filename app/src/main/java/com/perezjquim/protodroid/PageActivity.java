@@ -14,23 +14,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.perezjquim.protodroid.db.DatabaseManager;
+import com.perezjquim.protodroid.db.Element;
+import com.perezjquim.protodroid.db.Page;
 import com.perezjquim.protodroid.view.ActionCardView;
+
+import java.util.ArrayList;
 
 import static com.perezjquim.UIHelper.askBinary;
 import static com.perezjquim.UIHelper.toast;
 
 public class PageActivity extends AppCompatActivity
 {
-    private int id;
-    private String name;
-
-    private static final int COLUMN_ID = 0;
-    private static final int COLUMN_TYPE = 1;
-    private static final int COLUMN_LABEL = 2;
-    private static final int COLUMN_CONFIG = 3;
-    private static final int COLUMN_PAGE_ID = 4;
-    private static final int COLUMN_PAGE_DESTINATION_ID = 5;
-
+    private int page_id;
+    private String page_name;
+    private int project_id;
 
     private static final String[] types = { "Button" , "Checkbox" , "Switch" };
 
@@ -46,20 +43,21 @@ public class PageActivity extends AppCompatActivity
     private void initPage()
     {
         Intent i = getIntent();
-        id = i.getIntExtra("id",-1);
-        name = i.getStringExtra("name");
+        project_id = i.getIntExtra("project_id",-1);
+        page_id = i.getIntExtra("page_id",-1);
+        page_name = i.getStringExtra("page_name");
         TextView title = findViewById(R.id.title);
-        title.setText(name);
+        title.setText(page_name);
     }
 
     private void listElements()
     {
-        Cursor elements = DatabaseManager.getElements(id);
+        Cursor elements = DatabaseManager.getElements(page_id);
         LinearLayout elementListView = findViewById(R.id.elementList);
         while(elements.moveToNext())
         {
-            final int id = elements.getInt(COLUMN_ID);
-            final String name = elements.getString(COLUMN_LABEL);
+            final int id = elements.getInt(Element.ID.index);
+            final String name = elements.getString(Element.LABEL.index);
 
             final ActionCardView[] card = new ActionCardView[1];
             card[0] = new ActionCardView(this, name,
@@ -95,16 +93,41 @@ public class PageActivity extends AppCompatActivity
         spTypes.setSelection(0);
         form.addView(spTypes);
 
+       /* TextView lblLink = new TextView(this);
+        lblType.setText("Link:");
+        form.addView(lblLink);
+
+        Spinner spLink = new Spinner(this);
+        ArrayList<String> page_names = new ArrayList<>();
+        ArrayList<Integer> page_ids = new ArrayList<>();
+        page_names.add("(none)");
+        Cursor pages = DatabaseManager.getPages(project_id);
+        while(pages.moveToNext())
+        {
+            page_ids.add(pages.getInt(Page.ID.index));
+            page_names.add(pages.getString(Page.NAME.index));
+        }
+        spLink.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, page_names));
+        spLink.setSelection(0);
+        form.addView(spLink);*/
+
         alertDialog.setView(form);
         alertDialog.setPositiveButton("Confirm",
                 (dialog,which) ->
                 {
-                    System.out.println(spTypes.getSelectedItemPosition());
-                    DatabaseManager.insertElement(spTypes.getSelectedItemPosition(),""+fldLabel.getText(),"",id);
+                    /*int index = spLink.getSelectedItemPosition();
+                    if(index == 0)
+                    {
+                        DatabaseManager.insertElement(index,""+fldLabel.getText(),"",page_id);
+                    }
+                    else
+                    {
+                        DatabaseManager.insertElement(index,""+fldLabel.getText(),"",page_id,page_ids.get(index - 1));
+                    }*/
                     toast(this,"Element created!");
                     Intent i = new Intent(this,PageActivity.class);
-                    i.putExtra("id",id);
-                    i.putExtra("name",name);
+                    i.putExtra("page_id",page_id);
+                    i.putExtra("page_name",page_name);
                     startActivity(i);
                     this.finish();
                 });
@@ -113,9 +136,9 @@ public class PageActivity extends AppCompatActivity
         alertDialog.show();
     }
 
-    private void updateElement(int elementID)
+    private void updateElement(int element_id)
     {
-        Cursor previous = DatabaseManager.getIndividualElement(elementID);
+        Cursor previous = DatabaseManager.getIndividualElement(element_id);
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Create a new element");
@@ -129,7 +152,7 @@ public class PageActivity extends AppCompatActivity
         form.addView(lblLabel);
 
         EditText fldLabel = new EditText(this);
-        fldLabel.setText(previous.getString(COLUMN_LABEL));;
+        fldLabel.setText(previous.getString(Element.LABEL.index));;
         form.addView(fldLabel);
 
         TextView lblType = new TextView(this);
@@ -138,18 +161,40 @@ public class PageActivity extends AppCompatActivity
 
         Spinner spTypes = new Spinner(this);
         spTypes.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, types));
-        spTypes.setSelection(previous.getInt(COLUMN_TYPE));
+        spTypes.setSelection(previous.getInt(Element.TYPE.index));
         form.addView(spTypes);
+
+        /*TextView lblLink = new TextView(this);
+        lblType.setText("Link:");
+        form.addView(lblLink);
+
+        Spinner spLink = new Spinner(this);
+        ArrayList<String> page_names = new ArrayList<>();
+        ArrayList<Integer> page_ids = new ArrayList<>();
+        page_names.add("(none)");
+        Cursor pages = DatabaseManager.getPages(project_id);
+        while(pages.moveToNext())
+        {
+            page_ids.add(pages.getInt(Page.ID.index));
+            page_names.add(pages.getString(Page.NAME.index));
+        }
+        spLink.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, page_names));
+        int page_destination_id = previous.getInt(Element.PAGE_DESTINATION_ID.index);
+        if(page_destination_id != -1)
+            spLink.setSelection(page_names.indexOf(page_destination_id));
+        else
+            spLink.setSelection(0);
+        form.addView(spLink);*/
 
         alertDialog.setView(form);
         alertDialog.setPositiveButton("Confirm",
                 (dialog,which) ->
                 {
-                    DatabaseManager.updateElement(spTypes.getSelectedItemPosition(),""+fldLabel.getText(),"",elementID);
+                    DatabaseManager.updateElement(spTypes.getSelectedItemPosition(),""+fldLabel.getText(),"",element_id);
                     toast(this,"Element updated!");
                     Intent i = new Intent(this,PageActivity.class);
-                    i.putExtra("id",id);
-                    i.putExtra("name",name);
+                    i.putExtra("page_id",page_id);
+                    i.putExtra("page_name",page_name);
                     startActivity(i);
                     this.finish();
                 });
@@ -158,12 +203,12 @@ public class PageActivity extends AppCompatActivity
         alertDialog.show();
     }
 
-    private void deleteElement(LinearLayout list, ActionCardView card, int elementID)
+    private void deleteElement(LinearLayout list, ActionCardView card, int element_id)
     {
         askBinary(this,"Are you sure you want to delete this element?",null,()->
         {
             list.removeView(card);
-            DatabaseManager.deleteElement(id);
+            DatabaseManager.deleteElement(element_id);
             toast(this,"Element deleted!");
         });
     }

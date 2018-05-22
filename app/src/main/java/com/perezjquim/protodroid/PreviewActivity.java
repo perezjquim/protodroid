@@ -11,20 +11,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.perezjquim.protodroid.db.DatabaseManager;
+import com.perezjquim.protodroid.db.Element;
 import com.perezjquim.protodroid.view.ActionCardView;
 
 public class PreviewActivity extends AppCompatActivity
 {
     private int id;
     private String name;
-
-    private static final int COLUMN_ID = 0;
-    private static final int COLUMN_TYPE = 1;
-    private static final int COLUMN_LABEL = 2;
-    private static final int COLUMN_CONFIG = 3;
-    private static final int COLUMN_PAGE_ID = 4;
-    private static final int COLUMN_PAGE_DESTINATION_ID = 5;
-
 
     private static final int TYPE_BUTTON = 0;
     private static final int TYPE_CHECKBOX = 1;
@@ -54,16 +47,26 @@ public class PreviewActivity extends AppCompatActivity
         LinearLayout screen = findViewById(R.id.screen);
         while(elements.moveToNext())
         {
-            final int type = elements.getInt(COLUMN_TYPE);
-            final String label = elements.getString(COLUMN_LABEL);
-            final int page_destination_id = elements.getInt(COLUMN_PAGE_DESTINATION_ID);
-            final String config = elements.getString(COLUMN_CONFIG);
+            final int type = elements.getInt(Element.TYPE.index);
+            final String label = elements.getString(Element.LABEL.index);
+            final int page_destination_id = elements.getInt(Element.PAGE_DESTINATION_ID.index);
+            final String config = elements.getString(Element.CONFIG.index);
 
             switch(type)
             {
                 case TYPE_BUTTON:
                     Button b = new Button(this);
                     b.setText(label);
+                    /*if(page_destination_id != -1)
+                    {
+                        b.setOnClickListener((v)->
+                        {
+                            Intent i = new Intent(this,PreviewActivity.class);
+                            i.putExtra("page_id",page_destination_id);
+                            i.putExtra("page_name",page_name);
+                            startActivity(i);
+                        });
+                    }*/
                     screen.addView(b);
                     break;
 

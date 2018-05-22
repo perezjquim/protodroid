@@ -59,6 +59,8 @@ public abstract class DatabaseManager
             "SELECT * FROM " + ELEMENT_TABLE + " WHERE page_id='_page_id'";
     private static final String SQL_INSERT_ELEMENT =
             "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,page_id) VALUES ('_type','_label','_config','_page_id')";
+    private static final String SQL_INSERT_ELEMENT_WITH_DESTINATION =
+            "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,page_id,page_destination_id) VALUES ('_type','_label','_config','_page_id','_page_destination_id`)";
     private static final String SQL_UPDATE_ELEMENT =
             "UPDATE " + ELEMENT_TABLE +" SET type='_type' , label='_label' , config='_config' WHERE id='_id'";
     private static final String SQL_GET_INDIVIDUAL_ELEMENT =
@@ -200,6 +202,15 @@ public abstract class DatabaseManager
                 .replace("_label",label)
                 .replace("_config",config)
                 .replace("_page_id",""+page_id));
+    }
+    public static void insertElement(int type,String label,String config,int page_id,int page_destination_id)
+    {
+        query(SQL_INSERT_ELEMENT
+                .replace("_type",""+type)
+                .replace("_label",label)
+                .replace("_config",config)
+                .replace("_page_id",""+page_id)
+                .replace("_page_destination_id",""+page_destination_id));
     }
     public static void updateElement(int type,String label,String config, int id)
     {

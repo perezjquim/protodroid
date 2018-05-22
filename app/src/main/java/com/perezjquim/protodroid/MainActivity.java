@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 
 import com.perezjquim.PermissionChecker;
 import com.perezjquim.protodroid.db.DatabaseManager;
+import com.perezjquim.protodroid.db.Project;
 import com.perezjquim.protodroid.view.ActionCardView;
 
 import static com.perezjquim.UIHelper.askBinary;
@@ -17,9 +18,6 @@ import static com.perezjquim.UIHelper.toast;
 
 public class MainActivity extends AppCompatActivity
 {
-    private static final int COLUMN_ID = 0;
-    private static final int COLUMN_NAME = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -46,10 +44,10 @@ public class MainActivity extends AppCompatActivity
     {
         Cursor projects = DatabaseManager.getProjects();
         LinearLayout projectListView = findViewById(R.id.projectList);
-        for(int i = 0; projects.moveToNext(); i++)
+        while(projects.moveToNext())
         {
-            final int id = projects.getInt(COLUMN_ID);
-            final String name = projects.getString(COLUMN_NAME);
+            final int id = projects.getInt(Project.ID.index);
+            final String name = projects.getString(Project.NAME.index);
 
             final ActionCardView[] card = new ActionCardView[1];
             card[0] = new ActionCardView(this, name,
@@ -63,8 +61,8 @@ public class MainActivity extends AppCompatActivity
     private void openProject(int id, String name)
     {
         Intent i = new Intent(this,ProjectActivity.class);
-        i.putExtra("id",id);
-        i.putExtra("name",name);
+        i.putExtra("project_id",id);
+        i.putExtra("project_name",name);
         startActivity(i);
     }
 

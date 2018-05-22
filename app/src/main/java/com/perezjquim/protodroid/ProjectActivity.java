@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.perezjquim.protodroid.db.DatabaseManager;
+import com.perezjquim.protodroid.db.Page;
 import com.perezjquim.protodroid.view.ActionCardView;
 
 import static com.perezjquim.UIHelper.askBinary;
@@ -17,12 +18,8 @@ import static com.perezjquim.UIHelper.toast;
 
 public class ProjectActivity extends AppCompatActivity
 {
-    private int id;
-    private String name;
-
-    private static final int COLUMN_ID = 0;
-    private static final int COLUMN_PROJECT_ID = 1;
-    private static final int COLUMN_NAME = 2;
+    private int project_id;
+    private String project_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -36,20 +33,20 @@ public class ProjectActivity extends AppCompatActivity
     private void initProject()
     {
         Intent i = getIntent();
-        id = i.getIntExtra("id",-1);
-        name = i.getStringExtra("name");
+        project_id = i.getIntExtra("project_id",-1);
+        project_name = i.getStringExtra("project_name");
         TextView title = findViewById(R.id.title);
-        title.setText(name);
+        title.setText(project_name);
     }
 
     private void listPages()
     {
-        Cursor pages = DatabaseManager.getPages(id);
+        Cursor pages = DatabaseManager.getPages(project_id);
         LinearLayout pageListView = findViewById(R.id.pageList);
-        for(int i = 0; pages.moveToNext(); i++)
+        while(pages.moveToNext())
         {
-            final int id = pages.getInt(COLUMN_ID);
-            final String name = pages.getString(COLUMN_NAME);
+            final int id = pages.getInt(Page.ID.index);
+            final String name = pages.getString(Page.NAME.index);
 
             final ActionCardView[] card = new ActionCardView[1];
             card[0] = new ActionCardView(this, name,
@@ -60,19 +57,20 @@ public class ProjectActivity extends AppCompatActivity
         }
     }
 
-    private void openPage(int id, String name)
+    private void openPage(int page_id, String page_name)
     {
         Intent i = new Intent(this,PageActivity.class);
-        i.putExtra("id",id);
-        i.putExtra("name",name);
+        i.putExtra("project_id",project_id);
+        i.putExtra("page_id",page_id);
+        i.putExtra("page_name",page_name);
         startActivity(i);
     }
 
-    private void previewPage(int id,String name)
+    private void previewPage(int page_id,String page_name)
     {
         Intent i = new Intent(this,PreviewActivity.class);
-        i.putExtra("id",id);
-        i.putExtra("name",name);
+        i.putExtra("page_id",page_id);
+        i.putExtra("page_name",page_name);
         startActivity(i);
     }
 
@@ -80,22 +78,22 @@ public class ProjectActivity extends AppCompatActivity
     {
         askString(this,"Create a new page","Page name:",(response)->
         {
-            DatabaseManager.insertPage(id,(String) response);
+            DatabaseManager.insertPage(project_id,(String) response);
             toast(this,"Page created!");
             Intent i = new Intent(this,ProjectActivity.class);
-            i.putExtra("id",id);
-            i.putExtra("name",name);
+            i.putExtra("project_id",project_id);
+            i.putExtra("project_name",project_name);
             startActivity(i);
             this.finish();
         });
     }
 
-    private void deletePage(LinearLayout list, ActionCardView card, int pageID)
+    private void deletePage(LinearLayout list, ActionCardView card, int page_id)
     {
         askBinary(this,"Are you sure you want to delete this page?",null,()->
         {
             list.removeView(card);
-            DatabaseManager.deletePage(id);
+            DatabaseManager.deletePage(page_id);
             toast(this,"Page deleted!");
         });
     }
