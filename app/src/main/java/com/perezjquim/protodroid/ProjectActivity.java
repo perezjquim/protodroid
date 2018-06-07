@@ -45,8 +45,8 @@ public class ProjectActivity extends AppCompatActivity
         LinearLayout pageListView = findViewById(R.id.pageList);
         while(pages.moveToNext())
         {
-            final int id = pages.getInt(Page.ID.index);
-            final String name = pages.getString(Page.NAME.index);
+            final int id = pages.getInt(Page.ID.ordinal());
+            final String name = pages.getString(Page.NAME.ordinal());
 
             final ActionCardView[] card = new ActionCardView[1];
             card[0] = new ActionCardView(this, name,

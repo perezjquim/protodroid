@@ -19,6 +19,7 @@ import com.perezjquim.protodroid.db.Page;
 import com.perezjquim.protodroid.view.ActionCardView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.perezjquim.UIHelper.askBinary;
 import static com.perezjquim.UIHelper.toast;
@@ -28,8 +29,6 @@ public class PageActivity extends AppCompatActivity
     private int page_id;
     private String page_name;
     private int project_id;
-
-    private static final String[] types = { "Button" , "Checkbox" , "Switch" , "Field" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -56,8 +55,8 @@ public class PageActivity extends AppCompatActivity
         LinearLayout elementListView = findViewById(R.id.elementList);
         while(elements.moveToNext())
         {
-            final int id = elements.getInt(Element.ID.index);
-            final String name = elements.getString(Element.LABEL.index);
+            final int id = elements.getInt(Element.ID.ordinal());
+            final String name = elements.getString(Element.LABEL.ordinal());
 
             final ActionCardView[] card = new ActionCardView[1];
             card[0] = new ActionCardView(this, name,
@@ -111,16 +110,17 @@ public class PageActivity extends AppCompatActivity
         form.addView(lblLabel);
 
         EditText fldLabel = new EditText(this);
-        if(element != null) fldLabel.setText(element.getString(Element.LABEL.index));
+        if(element != null) fldLabel.setText(element.getString(Element.LABEL.ordinal()));
         form.addView(fldLabel);
 
         TextView lblType = new TextView(this);
         lblType.setText("Type:");
         form.addView(lblType);
 
+        String[] types = Arrays.toString(Element.Types.values()).replaceAll("^.|.$", "").split(", ");
         Spinner spTypes = new Spinner(this);
         spTypes.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, types));
-        if(element != null) spTypes.setSelection(element.getInt(Element.TYPE.index));
+        if(element != null) spTypes.setSelection(element.getInt(Element.TYPE.ordinal()));
         form.addView(spTypes);
 
         TextView lblLink = new TextView(this);
@@ -134,17 +134,17 @@ public class PageActivity extends AppCompatActivity
         Cursor pages = DatabaseManager.getPages(project_id);
         while(pages.moveToNext())
         {
-            int page_id = pages.getInt(Page.ID.index);
+            int page_id = pages.getInt(Page.ID.ordinal());
             if(this.page_id != page_id)
             {
-                page_ids.add(pages.getInt(Page.ID.index));
-                page_names.add(pages.getString(Page.NAME.index));
+                page_ids.add(pages.getInt(Page.ID.ordinal()));
+                page_names.add(pages.getString(Page.NAME.ordinal()));
             }
         }
         spLink.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, page_names));
         if(element != null)
         {
-            int page_destination_id = element.getInt(Element.PAGE_DESTINATION_ID.index);
+            int page_destination_id = element.getInt(Element.PAGE_DESTINATION_ID.ordinal());
             if(page_destination_id != -1)
                 spLink.setSelection(page_ids.indexOf(page_destination_id) + 1);
             else
@@ -174,7 +174,7 @@ public class PageActivity extends AppCompatActivity
                                 spTypes.getSelectedItemPosition(),
                                 ""+fldLabel.getText(),
                                 "",
-                                element.getInt(Element.ID.index),
+                                element.getInt(Element.ID.ordinal()),
                                 _page_destination_id);
                         toast(this,"Element updated!");
                     }

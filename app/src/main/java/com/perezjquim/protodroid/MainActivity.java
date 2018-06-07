@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity
         LinearLayout projectListView = findViewById(R.id.projectList);
         while(projects.moveToNext())
         {
-            final int id = projects.getInt(Project.ID.index);
-            final String name = projects.getString(Project.NAME.index);
+            final int id = projects.getInt(Project.ID.ordinal());
+            final String name = projects.getString(Project.NAME.ordinal());
 
             final ActionCardView[] card = new ActionCardView[1];
             card[0] = new ActionCardView(this, name,
