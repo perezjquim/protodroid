@@ -29,7 +29,7 @@ public class PageActivity extends AppCompatActivity
     private String page_name;
     private int project_id;
 
-    private static final String[] types = { "Button" , "Checkbox" , "Switch" };
+    private static final String[] types = { "Button" , "Checkbox" , "Switch" , "Field" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

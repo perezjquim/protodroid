@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ public class PreviewActivity extends AppCompatActivity
     private static final int TYPE_BUTTON = 0;
     private static final int TYPE_CHECKBOX = 1;
     private static final int TYPE_SWITCH = 2;
+    private static final int TYPE_FIELD = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -86,6 +88,14 @@ public class PreviewActivity extends AppCompatActivity
                                 jumpToPage(page_destination_id));
                     }
                     screen.addView(s);
+                    break;
+
+                case TYPE_FIELD:
+                    TextView t = new TextView(this);
+                    t.setText(label);
+                    EditText e = new EditText(this);
+                    screen.addView(t);
+                    screen.addView(e);
                     break;
 
                 default:
