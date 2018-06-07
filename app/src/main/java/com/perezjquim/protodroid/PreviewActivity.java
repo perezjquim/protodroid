@@ -12,12 +12,12 @@ import android.widget.TextView;
 
 import com.perezjquim.protodroid.db.DatabaseManager;
 import com.perezjquim.protodroid.db.Element;
-import com.perezjquim.protodroid.view.ActionCardView;
+import com.perezjquim.protodroid.db.Page;
 
 public class PreviewActivity extends AppCompatActivity
 {
-    private int id;
-    private String name;
+    private int page_id;
+    private String page_name;
 
     private static final int TYPE_BUTTON = 0;
     private static final int TYPE_CHECKBOX = 1;
@@ -35,15 +35,15 @@ public class PreviewActivity extends AppCompatActivity
     private void initPage()
     {
         Intent i = getIntent();
-        id = i.getIntExtra("id",-1);
-        name = i.getStringExtra("name");
+        page_id = i.getIntExtra("page_id",-1);
+        page_name = i.getStringExtra("page_name");
         TextView title = findViewById(R.id.title);
-        title.setText(name);
+        title.setText(page_name);
     }
 
     private void listElements()
     {
-        Cursor elements = DatabaseManager.getElements(id);
+        Cursor elements = DatabaseManager.getElements(page_id);
         LinearLayout screen = findViewById(R.id.screen);
         while(elements.moveToNext())
         {
@@ -57,28 +57,50 @@ public class PreviewActivity extends AppCompatActivity
                 case TYPE_BUTTON:
                     Button b = new Button(this);
                     b.setText(label);
-                    /*if(page_destination_id != -1)
+                    if(page_destination_id != -1)
                     {
                         b.setOnClickListener((v)->
                         {
                             Intent i = new Intent(this,PreviewActivity.class);
                             i.putExtra("page_id",page_destination_id);
-                            i.putExtra("page_name",page_name);
+                            i.putExtra("page_name",DatabaseManager
+                                    .getIndividualPage(page_destination_id)
+                                    .getString(Page.NAME.index));
                             startActivity(i);
                         });
-                    }*/
+                    }
                     screen.addView(b);
                     break;
 
                 case TYPE_CHECKBOX:
                     CheckBox c = new CheckBox(this);
                     c.setText(label);
+                    if(page_destination_id != -1)
+                    {
+                        c.setOnClickListener((v)->
+                        {
+                            Intent i = new Intent(this,PreviewActivity.class);
+                            i.putExtra("page_id",page_destination_id);
+                            i.putExtra("page_name",page_name);
+                            startActivity(i);
+                        });
+                    }
                     screen.addView(c);
                     break;
 
                 case TYPE_SWITCH:
                     Switch s = new Switch(this);
                     s.setText(label);
+                    if(page_destination_id != -1)
+                    {
+                        s.setOnClickListener((v)->
+                        {
+                            Intent i = new Intent(this,PreviewActivity.class);
+                            i.putExtra("page_id",page_destination_id);
+                            i.putExtra("page_name",page_name);
+                            startActivity(i);
+                        });
+                    }
                     screen.addView(s);
                     break;
 

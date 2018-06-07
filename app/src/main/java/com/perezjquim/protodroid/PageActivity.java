@@ -93,8 +93,8 @@ public class PageActivity extends AppCompatActivity
         spTypes.setSelection(0);
         form.addView(spTypes);
 
-       /* TextView lblLink = new TextView(this);
-        lblType.setText("Link:");
+        TextView lblLink = new TextView(this);
+        lblLink.setText("Link:");
         form.addView(lblLink);
 
         Spinner spLink = new Spinner(this);
@@ -108,28 +108,16 @@ public class PageActivity extends AppCompatActivity
             page_names.add(pages.getString(Page.NAME.index));
         }
         spLink.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, page_names));
-        spLink.setSelection(0);
-        form.addView(spLink);*/
+        form.addView(spLink);
 
         alertDialog.setView(form);
         alertDialog.setPositiveButton("Confirm",
                 (dialog,which) ->
                 {
-                    /*int index = spLink.getSelectedItemPosition();
-                    if(index == 0)
-                    {
-                        DatabaseManager.insertElement(index,""+fldLabel.getText(),"",page_id);
-                    }
-                    else
-                    {
-                        DatabaseManager.insertElement(index,""+fldLabel.getText(),"",page_id,page_ids.get(index - 1));
-                    }*/
+                    int page_destination_id = spLink.getSelectedItemPosition() != 0 ? page_ids.get(spLink.getSelectedItemPosition() - 1) : -1;
+                    DatabaseManager.insertElement(page_destination_id,""+fldLabel.getText(),"",page_id,page_destination_id);
                     toast(this,"Element created!");
-                    Intent i = new Intent(this,PageActivity.class);
-                    i.putExtra("page_id",page_id);
-                    i.putExtra("page_name",page_name);
-                    startActivity(i);
-                    this.finish();
+                    refreshActivity();
                 });
         alertDialog.setNegativeButton("Cancel",
                 (dialog, which) -> dialog.cancel());
@@ -138,10 +126,10 @@ public class PageActivity extends AppCompatActivity
 
     private void updateElement(int element_id)
     {
-        Cursor previous = DatabaseManager.getIndividualElement(element_id);
+        Cursor element = DatabaseManager.getIndividualElement(element_id);
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Create a new element");
+        alertDialog.setTitle("Edit an element");
 
         LinearLayout form = new LinearLayout(this);
         form.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -152,7 +140,7 @@ public class PageActivity extends AppCompatActivity
         form.addView(lblLabel);
 
         EditText fldLabel = new EditText(this);
-        fldLabel.setText(previous.getString(Element.LABEL.index));;
+        fldLabel.setText(element.getString(Element.LABEL.index));;
         form.addView(fldLabel);
 
         TextView lblType = new TextView(this);
@@ -161,11 +149,11 @@ public class PageActivity extends AppCompatActivity
 
         Spinner spTypes = new Spinner(this);
         spTypes.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, types));
-        spTypes.setSelection(previous.getInt(Element.TYPE.index));
+        spTypes.setSelection(element.getInt(Element.TYPE.index));
         form.addView(spTypes);
 
-        /*TextView lblLink = new TextView(this);
-        lblType.setText("Link:");
+        TextView lblLink = new TextView(this);
+        lblLink.setText("Link:");
         form.addView(lblLink);
 
         Spinner spLink = new Spinner(this);
@@ -179,24 +167,21 @@ public class PageActivity extends AppCompatActivity
             page_names.add(pages.getString(Page.NAME.index));
         }
         spLink.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, page_names));
-        int page_destination_id = previous.getInt(Element.PAGE_DESTINATION_ID.index);
+        int page_destination_id = element.getInt(Element.PAGE_DESTINATION_ID.index);
         if(page_destination_id != -1)
-            spLink.setSelection(page_names.indexOf(page_destination_id));
+            spLink.setSelection(page_ids.indexOf(page_destination_id) + 1);
         else
             spLink.setSelection(0);
-        form.addView(spLink);*/
+        form.addView(spLink);
 
         alertDialog.setView(form);
         alertDialog.setPositiveButton("Confirm",
                 (dialog,which) ->
                 {
-                    DatabaseManager.updateElement(spTypes.getSelectedItemPosition(),""+fldLabel.getText(),"",element_id);
+                    int _page_destination_id = spLink.getSelectedItemPosition() != 0 ? page_ids.get(spLink.getSelectedItemPosition() - 1) : -1;
+                    DatabaseManager.updateElement(spTypes.getSelectedItemPosition(),""+fldLabel.getText(),"",element_id,_page_destination_id);
                     toast(this,"Element updated!");
-                    Intent i = new Intent(this,PageActivity.class);
-                    i.putExtra("page_id",page_id);
-                    i.putExtra("page_name",page_name);
-                    startActivity(i);
-                    this.finish();
+                    refreshActivity();
                 });
         alertDialog.setNegativeButton("Cancel",
                 (dialog, which) -> dialog.cancel());
@@ -211,6 +196,16 @@ public class PageActivity extends AppCompatActivity
             DatabaseManager.deleteElement(element_id);
             toast(this,"Element deleted!");
         });
+    }
+
+    private void refreshActivity()
+    {
+        Intent i = new Intent(this,PageActivity.class);
+        i.putExtra("project_id",project_id);
+        i.putExtra("page_id",page_id);
+        i.putExtra("page_name",page_name);
+        startActivity(i);
+        this.finish();
     }
 
 }

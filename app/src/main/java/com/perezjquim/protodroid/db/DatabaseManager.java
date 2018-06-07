@@ -41,6 +41,8 @@ public abstract class DatabaseManager
             "INSERT INTO " + PAGE_TABLE +" (project_id,name) VALUES ('_project_id','_name')";
     private static final String SQL_DELETE_PAGE =
             "DELETE FROM " + PAGE_TABLE + " WHERE id='_id'";
+    private static final String SQL_GET_INDIVIDUAL_PAGE =
+            "SELECT * FROM " + PAGE_TABLE + " WHERE id='_id'";
 
     private static final String ELEMENT_TABLE = "element";
     private static final String SQL_CREATE_ELEMENT_TABLE =
@@ -58,11 +60,9 @@ public abstract class DatabaseManager
     private static final String SQL_GET_ELEMENTS =
             "SELECT * FROM " + ELEMENT_TABLE + " WHERE page_id='_page_id'";
     private static final String SQL_INSERT_ELEMENT =
-            "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,page_id) VALUES ('_type','_label','_config','_page_id')";
-    private static final String SQL_INSERT_ELEMENT_WITH_DESTINATION =
-            "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,page_id,page_destination_id) VALUES ('_type','_label','_config','_page_id','_page_destination_id`)";
+             "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,page_id,page_destination_id) VALUES ('_type','_label','_config','_page_id','_page_destination_id`)";
     private static final String SQL_UPDATE_ELEMENT =
-            "UPDATE " + ELEMENT_TABLE +" SET type='_type' , label='_label' , config='_config' WHERE id='_id'";
+            "UPDATE " + ELEMENT_TABLE +" SET type='_type' , label='_label' , config='_config' , page_destination_id='_page_destination_id' WHERE id='_element_id'";
     private static final String SQL_GET_INDIVIDUAL_ELEMENT =
             "SELECT * FROM " + ELEMENT_TABLE + " WHERE id='_id'";
     private static final String SQL_DELETE_ELEMENT =
@@ -185,6 +185,13 @@ public abstract class DatabaseManager
         query(SQL_DELETE_PAGE
                 .replace("_id",""+id));
     }
+    public static Cursor getIndividualPage(int id)
+    {
+        Cursor c = querySelect(SQL_GET_INDIVIDUAL_PAGE
+                .replace("_id",""+id));
+        c.moveToNext();
+        return c;
+    }
 
     /* ************** */
     /* ELEMENTS */
@@ -193,14 +200,6 @@ public abstract class DatabaseManager
     {
         // Obtém os markers
         return querySelect(SQL_GET_ELEMENTS
-                .replace("_page_id",""+page_id));
-    }
-    public static void insertElement(int type,String label,String config,int page_id)
-    {
-        query(SQL_INSERT_ELEMENT
-                .replace("_type",""+type)
-                .replace("_label",label)
-                .replace("_config",config)
                 .replace("_page_id",""+page_id));
     }
     public static void insertElement(int type,String label,String config,int page_id,int page_destination_id)
@@ -212,13 +211,14 @@ public abstract class DatabaseManager
                 .replace("_page_id",""+page_id)
                 .replace("_page_destination_id",""+page_destination_id));
     }
-    public static void updateElement(int type,String label,String config, int id)
+    public static void updateElement(int type,String label,String config, int element_id, int page_destination_id)
     {
         query(SQL_UPDATE_ELEMENT
                 .replace("_type",""+type)
                 .replace("_label",label)
                 .replace("_config",config)
-                .replace("_id",""+id));
+                .replace("_element_id",""+element_id)
+                .replace("'_page_destination_id'",("'"+page_destination_id+"'").replace("'-1'","NULL")));
     }
     public static void deleteElement(int id)
     {
