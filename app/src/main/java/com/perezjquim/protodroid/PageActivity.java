@@ -73,54 +73,8 @@ public class PageActivity extends AppCompatActivity
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Create a new element");
 
-        LinearLayout form = new LinearLayout(this);
-        form.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        form.setOrientation(LinearLayout.VERTICAL);
+        fillForm(alertDialog,null);
 
-        TextView lblLabel = new TextView(this);
-        lblLabel.setText("Label:");
-        form.addView(lblLabel);
-
-        EditText fldLabel = new EditText(this);
-        form.addView(fldLabel);
-
-        TextView lblType = new TextView(this);
-        lblType.setText("Type:");
-        form.addView(lblType);
-
-        Spinner spTypes = new Spinner(this);
-        spTypes.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, types));
-        spTypes.setSelection(0);
-        form.addView(spTypes);
-
-        TextView lblLink = new TextView(this);
-        lblLink.setText("Link:");
-        form.addView(lblLink);
-
-        Spinner spLink = new Spinner(this);
-        ArrayList<String> page_names = new ArrayList<>();
-        ArrayList<Integer> page_ids = new ArrayList<>();
-        page_names.add("(none)");
-        Cursor pages = DatabaseManager.getPages(project_id);
-        while(pages.moveToNext())
-        {
-            page_ids.add(pages.getInt(Page.ID.index));
-            page_names.add(pages.getString(Page.NAME.index));
-        }
-        spLink.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, page_names));
-        form.addView(spLink);
-
-        alertDialog.setView(form);
-        alertDialog.setPositiveButton("Confirm",
-                (dialog,which) ->
-                {
-                    int page_destination_id = spLink.getSelectedItemPosition() != 0 ? page_ids.get(spLink.getSelectedItemPosition() - 1) : -1;
-                    DatabaseManager.insertElement(page_destination_id,""+fldLabel.getText(),"",page_id,page_destination_id);
-                    toast(this,"Element created!");
-                    refreshActivity();
-                });
-        alertDialog.setNegativeButton("Cancel",
-                (dialog, which) -> dialog.cancel());
         alertDialog.show();
     }
 
@@ -131,60 +85,8 @@ public class PageActivity extends AppCompatActivity
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Edit an element");
 
-        LinearLayout form = new LinearLayout(this);
-        form.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        form.setOrientation(LinearLayout.VERTICAL);
+        fillForm(alertDialog,element);
 
-        TextView lblLabel = new TextView(this);
-        lblLabel.setText("Label:");
-        form.addView(lblLabel);
-
-        EditText fldLabel = new EditText(this);
-        fldLabel.setText(element.getString(Element.LABEL.index));;
-        form.addView(fldLabel);
-
-        TextView lblType = new TextView(this);
-        lblType.setText("Type:");
-        form.addView(lblType);
-
-        Spinner spTypes = new Spinner(this);
-        spTypes.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, types));
-        spTypes.setSelection(element.getInt(Element.TYPE.index));
-        form.addView(spTypes);
-
-        TextView lblLink = new TextView(this);
-        lblLink.setText("Link:");
-        form.addView(lblLink);
-
-        Spinner spLink = new Spinner(this);
-        ArrayList<String> page_names = new ArrayList<>();
-        ArrayList<Integer> page_ids = new ArrayList<>();
-        page_names.add("(none)");
-        Cursor pages = DatabaseManager.getPages(project_id);
-        while(pages.moveToNext())
-        {
-            page_ids.add(pages.getInt(Page.ID.index));
-            page_names.add(pages.getString(Page.NAME.index));
-        }
-        spLink.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, page_names));
-        int page_destination_id = element.getInt(Element.PAGE_DESTINATION_ID.index);
-        if(page_destination_id != -1)
-            spLink.setSelection(page_ids.indexOf(page_destination_id) + 1);
-        else
-            spLink.setSelection(0);
-        form.addView(spLink);
-
-        alertDialog.setView(form);
-        alertDialog.setPositiveButton("Confirm",
-                (dialog,which) ->
-                {
-                    int _page_destination_id = spLink.getSelectedItemPosition() != 0 ? page_ids.get(spLink.getSelectedItemPosition() - 1) : -1;
-                    DatabaseManager.updateElement(spTypes.getSelectedItemPosition(),""+fldLabel.getText(),"",element_id,_page_destination_id);
-                    toast(this,"Element updated!");
-                    refreshActivity();
-                });
-        alertDialog.setNegativeButton("Cancel",
-                (dialog, which) -> dialog.cancel());
         alertDialog.show();
     }
 
@@ -196,6 +98,91 @@ public class PageActivity extends AppCompatActivity
             DatabaseManager.deleteElement(element_id);
             toast(this,"Element deleted!");
         });
+    }
+
+    private void fillForm(AlertDialog.Builder alertDialog, Cursor element)
+    {
+        LinearLayout form = new LinearLayout(this);
+        form.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        form.setOrientation(LinearLayout.VERTICAL);
+
+        TextView lblLabel = new TextView(this);
+        lblLabel.setText("Label:");
+        form.addView(lblLabel);
+
+        EditText fldLabel = new EditText(this);
+        if(element != null) fldLabel.setText(element.getString(Element.LABEL.index));
+        form.addView(fldLabel);
+
+        TextView lblType = new TextView(this);
+        lblType.setText("Type:");
+        form.addView(lblType);
+
+        Spinner spTypes = new Spinner(this);
+        spTypes.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, types));
+        if(element != null) spTypes.setSelection(element.getInt(Element.TYPE.index));
+        form.addView(spTypes);
+
+        TextView lblLink = new TextView(this);
+        lblLink.setText("Link:");
+        form.addView(lblLink);
+
+        Spinner spLink = new Spinner(this);
+        ArrayList<String> page_names = new ArrayList<>();
+        ArrayList<Integer> page_ids = new ArrayList<>();
+        page_names.add("(none)");
+        Cursor pages = DatabaseManager.getPages(project_id);
+        while(pages.moveToNext())
+        {
+            int page_id = pages.getInt(Page.ID.index);
+            if(this.page_id != page_id)
+            {
+                page_ids.add(pages.getInt(Page.ID.index));
+                page_names.add(pages.getString(Page.NAME.index));
+            }
+        }
+        spLink.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, page_names));
+        if(element != null)
+        {
+            int page_destination_id = element.getInt(Element.PAGE_DESTINATION_ID.index);
+            if(page_destination_id != -1)
+                spLink.setSelection(page_ids.indexOf(page_destination_id) + 1);
+            else
+                spLink.setSelection(0);
+        }
+
+        form.addView(spLink);
+        alertDialog.setView(form);
+
+        alertDialog.setPositiveButton("Confirm",
+                (dialog,which) ->
+                {
+                    int _page_destination_id = spLink.getSelectedItemPosition() != 0 ? page_ids.get(spLink.getSelectedItemPosition() - 1) : -1;
+                    if(element == null)
+                    {
+                        DatabaseManager.insertElement(
+                                spTypes.getSelectedItemPosition(),
+                                ""+fldLabel.getText(),
+                                "",
+                                page_id,
+                                _page_destination_id);
+                        toast(this,"Element created!");
+                    }
+                    else
+                    {
+                        DatabaseManager.updateElement(
+                                spTypes.getSelectedItemPosition(),
+                                ""+fldLabel.getText(),
+                                "",
+                                element.getInt(Element.ID.index),
+                                _page_destination_id);
+                        toast(this,"Element updated!");
+                    }
+                    refreshActivity();
+                });
+
+        alertDialog.setNegativeButton("Cancel",
+                (dialog, which) -> dialog.cancel());
     }
 
     private void refreshActivity()

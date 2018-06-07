@@ -60,7 +60,7 @@ public abstract class DatabaseManager
     private static final String SQL_GET_ELEMENTS =
             "SELECT * FROM " + ELEMENT_TABLE + " WHERE page_id='_page_id'";
     private static final String SQL_INSERT_ELEMENT =
-             "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,page_id,page_destination_id) VALUES ('_type','_label','_config','_page_id','_page_destination_id`)";
+             "INSERT INTO " + ELEMENT_TABLE +" (type,label,config,page_id,page_destination_id) VALUES ('_type','_label','_config','_page_id','_page_destination_id')";
     private static final String SQL_UPDATE_ELEMENT =
             "UPDATE " + ELEMENT_TABLE +" SET type='_type' , label='_label' , config='_config' , page_destination_id='_page_destination_id' WHERE id='_element_id'";
     private static final String SQL_GET_INDIVIDUAL_ELEMENT =
@@ -209,7 +209,7 @@ public abstract class DatabaseManager
                 .replace("_label",label)
                 .replace("_config",config)
                 .replace("_page_id",""+page_id)
-                .replace("_page_destination_id",""+page_destination_id));
+                .replace("'_page_destination_id'",("'"+page_destination_id+"'").replace("'-1'","NULL")));
     }
     public static void updateElement(int type,String label,String config, int element_id, int page_destination_id)
     {

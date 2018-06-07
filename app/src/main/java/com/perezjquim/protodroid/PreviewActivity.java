@@ -49,7 +49,8 @@ public class PreviewActivity extends AppCompatActivity
         {
             final int type = elements.getInt(Element.TYPE.index);
             final String label = elements.getString(Element.LABEL.index);
-            final int page_destination_id = elements.getInt(Element.PAGE_DESTINATION_ID.index);
+            final int page_destination_id = elements.isNull(Element.PAGE_DESTINATION_ID.index) ? -1 :
+                    elements.getInt(Element.PAGE_DESTINATION_ID.index);
             final String config = elements.getString(Element.CONFIG.index);
 
             switch(type)
@@ -60,14 +61,7 @@ public class PreviewActivity extends AppCompatActivity
                     if(page_destination_id != -1)
                     {
                         b.setOnClickListener((v)->
-                        {
-                            Intent i = new Intent(this,PreviewActivity.class);
-                            i.putExtra("page_id",page_destination_id);
-                            i.putExtra("page_name",DatabaseManager
-                                    .getIndividualPage(page_destination_id)
-                                    .getString(Page.NAME.index));
-                            startActivity(i);
-                        });
+                                jumpToPage(page_destination_id));
                     }
                     screen.addView(b);
                     break;
@@ -78,12 +72,7 @@ public class PreviewActivity extends AppCompatActivity
                     if(page_destination_id != -1)
                     {
                         c.setOnClickListener((v)->
-                        {
-                            Intent i = new Intent(this,PreviewActivity.class);
-                            i.putExtra("page_id",page_destination_id);
-                            i.putExtra("page_name",page_name);
-                            startActivity(i);
-                        });
+                                jumpToPage(page_destination_id));
                     }
                     screen.addView(c);
                     break;
@@ -94,12 +83,7 @@ public class PreviewActivity extends AppCompatActivity
                     if(page_destination_id != -1)
                     {
                         s.setOnClickListener((v)->
-                        {
-                            Intent i = new Intent(this,PreviewActivity.class);
-                            i.putExtra("page_id",page_destination_id);
-                            i.putExtra("page_name",page_name);
-                            startActivity(i);
-                        });
+                                jumpToPage(page_destination_id));
                     }
                     screen.addView(s);
                     break;
@@ -108,5 +92,15 @@ public class PreviewActivity extends AppCompatActivity
                     break;
             }
         }
+    }
+
+    private void jumpToPage(int page_destination_id)
+    {
+        Intent i = new Intent(this,PreviewActivity.class);
+        i.putExtra("page_id",page_destination_id);
+        i.putExtra("page_name",DatabaseManager
+                .getIndividualPage(page_destination_id)
+                .getString(Page.NAME.index));
+        startActivity(i);
     }
 }
