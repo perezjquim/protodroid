@@ -5,7 +5,6 @@ public enum Element
     ID,
     TYPE,
     LABEL,
-    CONFIG,
     PAGE_ID,
     PAGE_DESTINATION_ID;
 
@@ -30,6 +29,11 @@ public enum Element
                 {
                     @Override
                     public String toString() { return "Field"; }
+                },
+        FIELD_PASSWORD
+                {
+                    @Override
+                    public String toString() { return "Field (Password)"; }
                 },
         NUMBER_PICKER
                 {

@@ -21,6 +21,8 @@ public class ProjectActivity extends AppCompatActivity
     private int project_id;
     private String project_name;
 
+    private static final String TITLE = " (Pages)";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -36,7 +38,7 @@ public class ProjectActivity extends AppCompatActivity
         project_id = i.getIntExtra("project_id",-1);
         project_name = i.getStringExtra("project_name");
         TextView title = findViewById(R.id.title);
-        title.setText(project_name);
+        title.setText(project_name + TITLE);
     }
 
     private void listPages()

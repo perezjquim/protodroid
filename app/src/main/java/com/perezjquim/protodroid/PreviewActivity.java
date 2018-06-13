@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -57,7 +58,6 @@ public class PreviewActivity extends AppCompatActivity
             final String label = elements.getString(Element.LABEL.ordinal());
             final int page_destination_id = elements.isNull(Element.PAGE_DESTINATION_ID.ordinal()) ? -1 :
                     elements.getInt(Element.PAGE_DESTINATION_ID.ordinal());
-            final String config = elements.getString(Element.CONFIG.ordinal());
 
             switch(Element.Types.values()[type])
             {
@@ -98,6 +98,15 @@ public class PreviewActivity extends AppCompatActivity
                     EditText e = new EditText(this);
                     e.setHint(label);
                     screen.addView(e);
+                    break;
+
+                case FIELD_PASSWORD:
+                    EditText fldPass = new EditText(this);
+                    fldPass.setHint(label);
+                    fldPass.setInputType(
+                            InputType.TYPE_CLASS_TEXT |
+                            InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    screen.addView(fldPass);
                     break;
 
                 case NUMBER_PICKER:

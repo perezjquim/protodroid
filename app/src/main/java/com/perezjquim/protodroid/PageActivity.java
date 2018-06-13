@@ -30,6 +30,10 @@ public class PageActivity extends AppCompatActivity
     private String page_name;
     private int project_id;
 
+    private static final int TYPE_NONE = 0;
+
+    private static final String TITLE = " (Elements)";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -46,7 +50,7 @@ public class PageActivity extends AppCompatActivity
         page_id = i.getIntExtra("page_id",-1);
         page_name = i.getStringExtra("page_name");
         TextView title = findViewById(R.id.title);
-        title.setText(page_name);
+        title.setText(page_name + TITLE);
     }
 
     private void listElements()
@@ -157,13 +161,15 @@ public class PageActivity extends AppCompatActivity
         alertDialog.setPositiveButton("Confirm",
                 (dialog,which) ->
                 {
-                    int _page_destination_id = spLink.getSelectedItemPosition() != 0 ? page_ids.get(spLink.getSelectedItemPosition() - 1) : -1;
+                    int _page_destination_id = spLink.getSelectedItemPosition() != TYPE_NONE ?
+                            page_ids.get(spLink.getSelectedItemPosition() - 1) :
+                            -1;
+
                     if(element == null)
                     {
                         DatabaseManager.insertElement(
                                 spTypes.getSelectedItemPosition(),
-                                ""+fldLabel.getText(),
-                                "",
+                                fldLabel.getText()+"",
                                 page_id,
                                 _page_destination_id);
                         toast(this,"Element created!");
@@ -172,8 +178,7 @@ public class PageActivity extends AppCompatActivity
                     {
                         DatabaseManager.updateElement(
                                 spTypes.getSelectedItemPosition(),
-                                ""+fldLabel.getText(),
-                                "",
+                                fldLabel.getText()+"",
                                 element.getInt(Element.ID.ordinal()),
                                 _page_destination_id);
                         toast(this,"Element updated!");
