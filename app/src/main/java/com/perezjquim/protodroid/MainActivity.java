@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 
 import com.perezjquim.PermissionChecker;
 import com.perezjquim.protodroid.db.DatabaseManager;
+import com.perezjquim.protodroid.db.Page;
 import com.perezjquim.protodroid.db.Project;
 import com.perezjquim.protodroid.view.ActionCardView;
 
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity
 
             final ActionCardView[] card = new ActionCardView[1];
             card[0] = new ActionCardView(this, name,
-                    (v)->toast(this,"(project preview)"),
+                    (v)->previewProject(id),
                     (v)->openProject(id,name),
                     (v)->deleteProject(projectListView,card[0],id));
             projectListView.addView(card[0]);
@@ -85,5 +86,22 @@ public class MainActivity extends AppCompatActivity
             DatabaseManager.deleteProject(projectID);
             toast(this,"Project deleted!");
         });
+    }
+
+    private void previewProject(int projectID)
+    {
+        Cursor c = DatabaseManager.getMainPage(projectID);
+        c.moveToNext();
+        int page_id = c.getInt(Page.ID.ordinal());
+        String page_name = c.getString(Page.NAME.ordinal());
+        previewPage(page_id,page_name);
+    }
+
+    private void previewPage(int page_id, String page_name)
+    {
+        Intent i = new Intent(this,PreviewActivity.class);
+        i.putExtra("page_id",page_id);
+        i.putExtra("page_name",page_name);
+        startActivity(i);
     }
 }

@@ -12,8 +12,6 @@ import android.widget.TextView;
 public class ActionCardView extends CardView
 {
     private LinearLayout content;
-    private TextView txtLabel;
-    private ImageButton btnPlay, btnEdit, btnDelete;
     private static final int PADDING_LEFT_RIGHT = 10;
     private static final int PADDING_TOP_BOTTOM = 50;
 
@@ -53,7 +51,7 @@ public class ActionCardView extends CardView
     {
         if(actionPlay != null)
         {
-            btnPlay = new ImageButton(c);
+            ImageButton btnPlay = new ImageButton(c);
             btnPlay.setOnClickListener(actionPlay);
             btnPlay.setImageResource(android.R.drawable.ic_media_play);
             btnPlay.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
@@ -62,7 +60,7 @@ public class ActionCardView extends CardView
 
         if(actionEdit != null)
         {
-            btnEdit = new ImageButton(c);
+            ImageButton btnEdit = new ImageButton(c);
             btnEdit.setOnClickListener(actionEdit);
             btnEdit.setImageResource(android.R.drawable.ic_menu_edit);
             btnEdit.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
@@ -71,7 +69,7 @@ public class ActionCardView extends CardView
 
         if(actionDelete != null)
         {
-            btnDelete = new ImageButton(c);
+            ImageButton btnDelete = new ImageButton(c);
             btnDelete.setOnClickListener(actionDelete);
             btnDelete.setImageResource(android.R.drawable.ic_menu_delete);
             btnDelete.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.3f));
@@ -81,7 +79,7 @@ public class ActionCardView extends CardView
 
     private void initLabel(Context c,String name)
     {
-        txtLabel = new TextView(c);
+        TextView txtLabel = new TextView(c);
         txtLabel.setText(name);
         txtLabel.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,0.15f));
         content.addView(txtLabel);

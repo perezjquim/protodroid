@@ -2,8 +2,10 @@ package com.perezjquim.protodroid;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,6 +22,8 @@ public class ProjectActivity extends AppCompatActivity
 {
     private int project_id;
     private String project_name;
+
+    private LinearLayout pageListView;
 
     private static final String TITLE = " (Pages)";
 
@@ -44,17 +48,26 @@ public class ProjectActivity extends AppCompatActivity
     private void listPages()
     {
         Cursor pages = DatabaseManager.getPages(project_id);
-        LinearLayout pageListView = findViewById(R.id.pageList);
+        pageListView = findViewById(R.id.pageList);
         while(pages.moveToNext())
         {
             final int id = pages.getInt(Page.ID.ordinal());
             final String name = pages.getString(Page.NAME.ordinal());
+            final boolean isMainPage = pages.getInt(Page.IS_MAIN_PAGE.ordinal()) == 1;
 
             final ActionCardView[] card = new ActionCardView[1];
-            card[0] = new ActionCardView(this, name,
+            card[0] = new ActionCardView(this,name,
                     (v)->previewPage(id,name),
                     (v)->openPage(id,name),
                     (v)->deletePage(pageListView,card[0],id));
+            if(isMainPage) card[0].setCardBackgroundColor(Color.RED);
+            card[0].setOnClickListener((v)->
+            {
+                uncolorCards();
+                DatabaseManager.selectMainPage(id);
+                card[0].setCardBackgroundColor(Color.RED);
+                toast(this,"Selected main page!");
+            });
             pageListView.addView(card[0]);
         }
     }
@@ -80,7 +93,7 @@ public class ProjectActivity extends AppCompatActivity
     {
         askString(this,"Create a new page","Page name:",(response)->
         {
-            DatabaseManager.insertPage(project_id,(String) response);
+            DatabaseManager.insertPage(project_id,(String) response,DatabaseManager.getPages(project_id).getCount() == 0);
             toast(this,"Page created!");
             Intent i = new Intent(this,ProjectActivity.class);
             i.putExtra("project_id",project_id);
@@ -98,6 +111,14 @@ public class ProjectActivity extends AppCompatActivity
             DatabaseManager.deletePage(page_id);
             toast(this,"Page deleted!");
         });
+    }
+
+    private void uncolorCards()
+    {
+        for(int i = 0 ; i < pageListView.getChildCount() ; i++)
+        {
+            ((CardView)pageListView.getChildAt(i)).setCardBackgroundColor(Color.WHITE);
+        }
     }
 
 }

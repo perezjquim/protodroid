@@ -33,16 +33,23 @@ public abstract class DatabaseManager
                     "`id` INTEGER NOT NULL PRIMARY KEY," +
                     "`project_id` INTEGER NOT NULL," +
                     "`name` VARCHAR(45) NOT NULL," +
+                    "`isMainPage` INT NOT NULL," +
                     "FOREIGN KEY (`project_id`) REFERENCES project(id) ON DELETE CASCADE "+
                     ")";
     private static final String SQL_GET_PAGES =
             "SELECT * FROM " + PAGE_TABLE + " WHERE project_id='%project_id%'";
     private static final String SQL_INSERT_PAGE =
-            "INSERT INTO " + PAGE_TABLE +" (project_id,name) VALUES ('%project_id%','%name%')";
+            "INSERT INTO " + PAGE_TABLE +" (project_id,name,isMainPage) VALUES ('%project_id%','%name%','%isMainPage%')";
     private static final String SQL_DELETE_PAGE =
             "DELETE FROM " + PAGE_TABLE + " WHERE id='%id%'";
     private static final String SQL_GET_INDIVIDUAL_PAGE =
             "SELECT * FROM " + PAGE_TABLE + " WHERE id='%id%'";
+    private static final String SQL_SELECT_MAIN_PAGE =
+            "UPDATE " + PAGE_TABLE +" SET isMainPage='1' WHERE id='%id%'";
+    private static final String SQL_SELECT_MAIN_PAGE_2 =
+            "UPDATE " + PAGE_TABLE +" SET isMainPage='0' WHERE id!='%id%'";
+    private static final String SQL_GET_MAIN_PAGE =
+            "SELECT * FROM " + PAGE_TABLE + " WHERE project_id='%project_id%' AND isMainPage='1'";
 
     private static final String ELEMENT_TABLE = "element";
     private static final String SQL_CREATE_ELEMENT_TABLE =
@@ -149,7 +156,6 @@ public abstract class DatabaseManager
     /* ************* */
     public static Cursor getProjects()
     {
-        // Obtém os markers
         return querySelect(SQL_GET_PROJECTS);
     }
     public static void insertProject(String name)
@@ -160,6 +166,11 @@ public abstract class DatabaseManager
     public static void deleteProject(int projectID)
     {
         query(SQL_DELETE_PROJECT
+                .replace("%project_id%",""+projectID));
+    }
+    public static Cursor getMainPage(int projectID)
+    {
+        return querySelect(SQL_GET_MAIN_PAGE
                 .replace("%project_id%",""+projectID));
     }
 
@@ -173,11 +184,12 @@ public abstract class DatabaseManager
         return querySelect(SQL_GET_PAGES
                 .replace("%project_id%",""+project_id));
     }
-    public static void insertPage (int project_id,String name)
+    public static void insertPage(int project_id,String name,boolean isMainPage)
     {
         query(SQL_INSERT_PAGE
                 .replace("%project_id%",""+project_id)
-                .replace("%name%",name));
+                .replace("%name%",name)
+                .replace("%isMainPage%", ""+Boolean.compare(isMainPage,false)));
     }
     public static void deletePage(int id)
     {
@@ -191,13 +203,20 @@ public abstract class DatabaseManager
         c.moveToNext();
         return c;
     }
+    public static void selectMainPage(int id)
+    {
+        queryInTransaction(
+                SQL_SELECT_MAIN_PAGE
+                    .replace("%id%",""+id),
+                SQL_SELECT_MAIN_PAGE_2
+                    .replace("%id%",""+id));
+    }
 
     /* ************** */
     /* ELEMENTS */
     /* ************** */
     public static Cursor getElements(int page_id)
     {
-        // Obtém os markers
         return querySelect(SQL_GET_ELEMENTS
                 .replace("%page_id%",""+page_id));
     }

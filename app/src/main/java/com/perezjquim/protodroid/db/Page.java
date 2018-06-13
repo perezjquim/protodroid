@@ -4,5 +4,6 @@ public enum Page
 {
     ID,
     PROJECT_ID,
-    NAME;
+    NAME,
+    IS_MAIN_PAGE;
 }
