@@ -41,6 +41,6 @@
         android:background="@color/green"
         android:drawableLeft="@android:drawable/ic_menu_add"
         android:text="@string/CREATE_NEW_PAGE"
-        android:textColor="@color/white"/>
+        android:textColor="@android:color/white"/>
 
 </LinearLayout>

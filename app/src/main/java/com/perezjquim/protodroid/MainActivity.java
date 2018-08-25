@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         PermissionChecker.init(this);
         DatabaseManager.initDatabase();
+        super.setTheme(R.style.AppTheme);
+
         setContentView(R.layout.activity_main);
         listProjects();
     }
